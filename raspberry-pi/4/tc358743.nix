@@ -20,6 +20,7 @@ in
     hardware.deviceTree.overlays = [
       {
         name = "tc358743-overlay";
+        filter = "bcm2711-rpi-*[!io].dtb";
         dtsText = ''
           /dts-v1/;
 
