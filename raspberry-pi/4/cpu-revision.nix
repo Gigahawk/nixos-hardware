@@ -7,7 +7,7 @@
         /plugin/;
 
         / {
-          compatible = "raspberrypi,4-model-b";
+          compatible = "brcm,bcm2711";
 
           fragment@0 {
             target-path = "/";
