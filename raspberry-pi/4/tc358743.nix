@@ -27,7 +27,7 @@ in
             compatible = "brcm,bcm2711";
 
             fragment@0 {
-              target = <0xffffffff>;
+              target = <&i2c_csi_dsi0>;
 
               __overlay__ {
                 #address-cells = <0x01>;
@@ -38,17 +38,18 @@ in
                   compatible = "toshiba,tc358743";
                   reg = <0x0f>;
                   status = "okay";
-                  clocks = <0x01>;
+                  clocks = <&cam1_clk>;
                   clock-names = "refclk";
 
                   port {
-
                     endpoint {
-                      remote-endpoint = <0x02>;
+                      remote-endpoint = <&csi1_ep>;
                       clock-lanes = <0x00>;
                       clock-noncontinuous;
-                      link-frequencies = <0x00 0x1cf7c580>;
-                      phandle = <0x03>;
+                      link-frequencies =
+                        /bits/ 64 <486000000>;
+                      //link-frequencies = <0x00 0x1cf7c580>;
+                      // phandle = <0x03>;
                     };
                   };
                 };
@@ -56,31 +57,30 @@ in
             };
 
             fragment@1 {
-              target = <0xffffffff>;
+              target = <&csi1>;
 
               __overlay__ {
                 status = "okay";
 
                 port {
-
                   endpoint {
-                    remote-endpoint = <0x03>;
-                    phandle = <0x02>;
+                    remote-endpoint = <&tc358743_0>;
+                    // phandle = <0x02>;
                   };
                 };
               };
             };
 
             fragment@2 {
-              target = <0x03>;
+              target = <&tc358743_0>;
 
-              __overlay__ {
-                data-lanes = <0x01 0x02>;
-              };
+              //__overlay__ {
+              //  data-lanes = <0x01 0x02>;
+              //};
             };
 
             fragment@3 {
-              target = <0x03>;
+              target = <&tc358743_0>;
 
               __dormant__ {
                 data-lanes = <0x01 0x02 0x03 0x04>;
@@ -88,7 +88,7 @@ in
             };
 
             fragment@4 {
-              target = <0xffffffff>;
+              target = <&i2c0if>;
 
               __overlay__ {
                 status = "okay";
@@ -96,7 +96,7 @@ in
             };
 
             fragment@5 {
-              target = <0xffffffff>;
+              target = <&i2c0mux>;
 
               __overlay__ {
                 status = "okay";
@@ -104,29 +104,32 @@ in
             };
 
             fragment@6 {
-              target-path = [2f 00];
+              //target-path = [2f 00];
+              target = <&cam1_clk>;
 
               __overlay__ {
 
-                bridge-clk {
-                  compatible = "fixed-clock";
-                  #clock-cells = <0x00>;
-                  clock-frequency = <0x19bfcc0>;
-                  phandle = <0x01>;
-                };
+                status = "okay";
+                clock-frequency = <27000000>;
+                //bridge-clk {
+                //  compatible = "fixed-clock";
+                //  #clock-cells = <0x00>;
+                //  clock-frequency = <0x19bfcc0>;
+                //  phandle = <0x01>;
+                //};
               };
             };
 
             fragment@7 {
-              target = <0x02>;
+              target = <&csi1_ep>;
 
-              __overlay__ {
-                data-lanes = <0x01 0x02>;
-              };
+              //__overlay__ {
+              //  data-lanes = <0x01 0x02>;
+              //};
             };
 
             fragment@8 {
-              target = <0x02>;
+              target = <&csi1_ep>;
 
               __dormant__ {
                 data-lanes = <0x01 0x02 0x03 0x04>;
@@ -134,75 +137,83 @@ in
             };
 
             __overrides__ {
-              4lane = "\0\0\0\0-2+3-7+8";
-              link-frequency = [00 00 00 03 6c 69 6e 6b 2d 66 72 65 71 75 65 6e 63 69 65 73 23 30 00];
+              //4lane = "\0\0\0\0-2+3-7+8";
+              //4lane = <0>, "-2+3-7+8";
+              //link-frequency = [00 00 00 03 6c 69 6e 6b 2d 66 72 65 71 75 65 6e 63 69 65 73 23 30 00];
+              //link-frequency = <&tc358743_0>,"link-frequencies#0";
+
+              //media-controller = <&csi>,"brcm,media-controller?";
+              //cam0 = <&i2c_frag>, "target:0=",<&i2c_csi_dsi0>,
+              //  <&csi_frag>, "target:0=",<&csi0>,
+              //  <&clk_frag>, "target:0=",<&cam0_clk>,
+              //  <&tc358743>, "clocks:0=",<&cam0_clk>;
             };
 
-            __symbols__ {
-              tc358743 = "/fragment@0/__overlay__/tc358743@0f/port/endpoint";
-              csi1_ep = "/fragment@1/__overlay__/port/endpoint";
-              tc358743_clk = "/fragment@6/__overlay__/bridge-clk";
-            };
+            //__symbols__ {
+            //  tc358743 = "/fragment@0/__overlay__/tc358743@0f/port/endpoint";
+            //  csi1_ep = "/fragment@1/__overlay__/port/endpoint";
+            //  tc358743_clk = "/fragment@6/__overlay__/bridge-clk";
+            //};
 
-            __fixups__ {
-              i2c_csi_dsi = "/fragment@0:target:0";
-              csi1 = "/fragment@1:target:0";
-              i2c0if = "/fragment@4:target:0";
-              i2c0mux = "/fragment@5:target:0";
-            };
+            //__fixups__ {
+            //  i2c_csi_dsi = "/fragment@0:target:0";
+            //  csi1 = "/fragment@1:target:0";
+            //  i2c0if = "/fragment@4:target:0";
+            //  i2c0mux = "/fragment@5:target:0";
+            //};
 
-            __local_fixups__ {
+            //__local_fixups__ {
 
-              fragment@0 {
+            //  fragment@0 {
 
-                __overlay__ {
+            //    __overlay__ {
 
-                  tc358743@0f {
-                    clocks = <0x00>;
+            //      tc358743@0f {
+            //        clocks = <0x00>;
 
-                    port {
+            //        port {
 
-                      endpoint {
-                        remote-endpoint = <0x00>;
-                      };
-                    };
-                  };
-                };
-              };
+            //          endpoint {
+            //            remote-endpoint = <0x00>;
+            //          };
+            //        };
+            //      };
+            //    };
+            //  };
 
-              fragment@1 {
+            //  fragment@1 {
 
-                __overlay__ {
+            //    __overlay__ {
 
-                  port {
+            //      port {
 
-                    endpoint {
-                      remote-endpoint = <0x00>;
-                    };
-                  };
-                };
-              };
+            //        endpoint {
+            //          remote-endpoint = <0x00>;
+            //        };
+            //      };
+            //    };
+            //  };
 
-              fragment@2 {
-                target = <0x00>;
-              };
+            //  fragment@2 {
+            //    target = <0x00>;
+            //  };
 
-              fragment@3 {
-                target = <0x00>;
-              };
+            //  fragment@3 {
+            //    target = <0x00>;
+            //  };
 
-              fragment@7 {
-                target = <0x00>;
-              };
+            //  fragment@7 {
+            //    target = <0x00>;
+            //  };
 
-              fragment@8 {
-                target = <0x00>;
-              };
+            //  fragment@8 {
+            //    target = <0x00>;
+            //  };
 
-              __overrides__ {
-                link-frequency = <0x00>;
-              };
-            };
+            //  __overrides__ {
+            //    link-frequency = <0x00>;
+            //  };
+            //};
           };
         '';
       }
